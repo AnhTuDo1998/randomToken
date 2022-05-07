@@ -19,7 +19,7 @@ contract RandomToken is ERC721Enumerable, Ownable {
 
     uint256 public maxMintAmount = 3;
 
-    constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {}
+    constructor() ERC721("Random Token", "RTK") {}
 
     // Mint function
     function mintToken() public payable {
