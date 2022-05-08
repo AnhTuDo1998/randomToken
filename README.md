@@ -19,7 +19,7 @@ truffle(develop)> migrate
 
 # Questions and Choice
 - Hard-code variables for sake of simplicity.
-- Mint 1 by 1 for sake of simplicity.
 - No authority/whitelist needed.
-- Will not work if 1 wei price is used.
+- Will not work if 1 wei price is used (for now).
+- owner mint for free but still affect token price.
 

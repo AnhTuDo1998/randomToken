@@ -13,7 +13,7 @@ contract RandomToken is ERC721Enumerable, Ownable {
 
     Counters.Counter private _tokenIdCounter;
 
-    uint256 public initCost = 0.000000001 ether;
+    uint256 public cost = 2;
 
     uint256 public maxSupply = 10;
 
@@ -22,23 +22,39 @@ contract RandomToken is ERC721Enumerable, Ownable {
     constructor() ERC721("Random Token", "RTK") {}
 
     // Mint function
-    function mintToken() public payable {
+    function mintToken(uint256 _mintAmount) public payable {
         uint256 supply = totalSupply();
-
-        uint256 costToMint = initCost;
+        uint256 _totalMintCost = getTotalMintCost(_mintAmount);
 
         // Ensure cannot mint more than the limit per minter
-        require(maxMintAmount - balanceOf(msg.sender) > 0);
-        require(supply.add(1) <= maxSupply);
+        require(_mintAmount > 0);
+        require(_mintAmount + balanceOf(msg.sender) <= maxMintAmount);
+        require(supply.add(_mintAmount) <= maxSupply);
 
-        // determine price by quadratic equation
+        // owner mint for free
         if (msg.sender != owner()) {
-            for (uint i = 0; i < balanceOf(msg.sender); i++) {
-                costToMint = costToMint ** 2;
-            }
-            require(msg.value >= costToMint);
+          require(msg.value >= _totalMintCost);
         }
-        _safeMint(msg.sender, supply.add(1));
+
+        // mint and increase price point
+        for (uint256 i = 1; i <= _mintAmount; i++) {
+          _safeMint(msg.sender, supply.add(i));
+          cost = cost ** 2;
+        }
+    }
+
+    // Get amount of token a user can mint left
+    function mintableTokenLeft() public view returns (uint256) {
+        return maxMintAmount - balanceOf(msg.sender);
+    }
+
+    // Get total cost needed to mint x amount of token at once
+    function getTotalMintCost(uint256 _mintAmount) public view returns (uint256) {
+        uint256 _total = 0;
+        for (uint256 i = 1; i <= _mintAmount; i++) {
+            _total = _total + (cost ** (2 ** (i -1)));
+        }
+        return _total;
     }
 
     // Query the list of tokens under a minter wallet
