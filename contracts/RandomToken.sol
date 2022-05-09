@@ -15,7 +15,7 @@ contract RandomToken is ERC721Enumerable, Ownable {
 
     uint256 public cost = 2;
 
-    uint256 public maxSupply = 10;
+    uint256 public maxSupply = 5;
 
     uint256 public maxMintAmount = 3;
 
